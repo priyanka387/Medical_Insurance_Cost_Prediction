@@ -1,47 +1,109 @@
+<!-- index.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Model Prediction Form</title>
+    <title>Cost Analysis Prediction</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1em;
+        }
+
+        #container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #result {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
 
-    <h2>Model Prediction Form</h2>
-    
-    <form id="prediction-form">
-        <label for="age">Age:</label>
-        <input type="number" id="age" name="age" required><br>
+    <header>
+        <h1>Cost Analysis Prediction</h1>
+    </header>
 
-        <label for="sex">Sex:</label>
-        <select id="sex" name="sex" required>
-            <option value="0">Male</option>
-            <option value="1">Female</option>
-        </select><br>
+    <div id="container">
+        <form id="prediction-form">
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" required>
 
-        <label for="bmi">BMI:</label>
-        <input type="number" id="bmi" name="bmi" step="0.01" required><br>
+            <label for="sex">Sex:</label>
+            <select id="sex" name="sex" required>
+                <option value="0">Male</option>
+                <option value="1">Female</option>
+            </select>
 
-        <label for="children">Children:</label>
-        <input type="number" id="children" name="children" required><br>
+            <label for="bmi">BMI:</label>
+            <input type="number" id="bmi" name="bmi" step="0.01" required>
 
-        <label for="smoker">Smoker:</label>
-        <select id="smoker" name="smoker" required>
-            <option value="0">No</option>
-            <option value="1">Yes</option>
-        </select><br>
+            <label for="children">Children:</label>
+            <input type="number" id="children" name="children" required>
 
-        <label for="region">Region:</label>
-        <select id="region" name="region" required>
-            <option value="northwest">Northwest</option>
-            <option value="southeast">Southeast</option>
-            <option value="southwest">Southwest</option>
-        </select><br>
+            <label for="smoker">Smoker:</label>
+            <select id="smoker" name="smoker" required>
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+            </select>
 
-        <button type="button" onclick="predict()">Predict</button>
-    </form>
+            <label for="region">Region:</label>
+            <select id="region" name="region" required>
+                <option value="northwest">Northwest</option>
+                <option value="southeast">Southeast</option>
+                <option value="southwest">Southwest</option>
+            </select>
 
-    <div id="result"></div>
+            <button type="button" onclick="predict()">Predict</button>
+        </form>
+
+        <div id="result"></div>
+    </div>
 
     <script>
         function predict() {
@@ -59,15 +121,24 @@
                 }
             };
 
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var resultDiv = document.getElementById("result");
+                    var prediction = JSON.parse(xhr.responseText).prediction;
+                    resultDiv.innerHTML = "Prediction: " + parseInt(prediction);
+                }
+            };
+            
+
             xhr.send(JSON.stringify({
                 age: formData.get("age"),
                 sex: formData.get("sex"),
                 bmi: formData.get("bmi"),
                 children: formData.get("children"),
                 smoker: formData.get("smoker"),
-                region: formData.get("region") === "northwest" ? [1, 0, 0] :
-                        formData.get("region") === "southeast" ? [0, 1, 0] :
-                        [0, 0, 1]
+                region_northwest: formData.get("region") === "northwest" ? 1 : 0,
+                region_southeast: formData.get("region") === "southeast" ? 1 : 0,
+                region_southwest: formData.get("region") === "southwest" ? 1 : 0
             }));
         }
     </script>

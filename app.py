@@ -1,3 +1,5 @@
+# Flask app
+
 from flask import Flask, request, jsonify, render_template
 import pickle
 import numpy as np
@@ -51,4 +53,4 @@ def predict():
 
 
 if __name__ == "__main__":
-    app.run(port=5000, debug=True)
+    app.run(port=5000)

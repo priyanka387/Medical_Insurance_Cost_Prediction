@@ -22,18 +22,11 @@ import logging
 logging.basicConfig(level=logging.WARN)
 logger = logging.getLogger(__name__)
 
-def eval_metrics(actual, pred, num_features):
+def eval_metrics(actual, pred):
     rmse = np.sqrt(mean_squared_error(actual, pred))
     mae = mean_absolute_error(actual, pred)
     r2 = r2_score(actual, pred)
-    mse = mean_squared_error(actual, pred)
-
-    # Calculate adjusted R-squared
-    n = len(actual)
-    k = num_features
-    r2_adj = 1 - ((1 - r2) * (n - 1) / (n - k - 1))
-
-    return rmse, mae, r2, r2_adj, mse
+    return rmse, mae, r2
 
 if __name__ == "__main__":
     warnings.filterwarnings("ignore")
@@ -48,6 +41,7 @@ if __name__ == "__main__":
     train_y = train[["charges"]]
     test_y = test[["charges"]]
 
+    # Define a list of regression algorithms and their corresponding hyperparameters
     regressors = [
         {"name": "ElasticNet", "model": ElasticNet(), "params": {"alpha": 0.5, "l1_ratio": 0.5}},
         {"name": "LinearRegression", "model": LinearRegression(), "params": {}},
@@ -68,26 +62,25 @@ if __name__ == "__main__":
             model = regressor["model"]
             params = regressor["params"]
 
+            # Set hyperparameters if provided
             model.set_params(**params)
 
             model.fit(train_x, train_y)
             predicted_qualities = model.predict(test_x)
 
-            (rmse, mae, r2, r2_adj, mse) = eval_metrics(test_y, predicted_qualities, train_x.shape[1])
+            (rmse, mae, r2) = eval_metrics(test_y, predicted_qualities)
 
             print(f"{model_name} model:")
             print("  RMSE:", rmse)
             print("  MAE:", mae)
             print("  R2:", r2)
-            print("  Adjusted R2:", r2_adj)
-            print("  MSE:", mse)
 
             mlflow.log_params(params)
             mlflow.log_metric("rmse", rmse)
             mlflow.log_metric("r2", r2)
             mlflow.log_metric("mae", mae)
-            mlflow.log_metric("r2_adj", r2_adj)
-            mlflow.log_metric("mse", mse)
+            
+            
 
             tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
 
