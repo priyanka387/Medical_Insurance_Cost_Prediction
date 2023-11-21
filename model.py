@@ -6,7 +6,6 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import ElasticNet, Ridge, Lasso, LinearRegression
 from sklearn.ensemble import RandomForestRegressor, AdaBoostRegressor, GradientBoostingRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.svm import SVR
@@ -43,10 +42,7 @@ if __name__ == "__main__":
 
     # Define a list of regression algorithms and their corresponding hyperparameters
     regressors = [
-        {"name": "ElasticNet", "model": ElasticNet(), "params": {"alpha": 0.5, "l1_ratio": 0.5}},
         {"name": "LinearRegression", "model": LinearRegression(), "params": {}},
-        {"name": "Ridge", "model": Ridge(), "params": {"alpha": 1.0}},
-        {"name": "Lasso", "model": Lasso(), "params": {"alpha": 1.0}},
         {"name": "RandomForest", "model": RandomForestRegressor(), "params": {"n_estimators": 100, "random_state": 42}},
         {"name": "DecisionTree", "model": DecisionTreeRegressor(), "params": {"random_state": 42}},
         {"name": "SVR", "model": SVR(), "params": {"kernel": "linear"}},

@@ -25,7 +25,7 @@ jobs:
         run: |
           docker build -t priyankapathak92/cost:latest .
           docker save -o cost_image.tar priyankapathak92/cost:latest
-        working-directory: ./  # Change this to your Dockerfile directory
+        working-directory: ./  
 
       - name: Upload Docker Image Artifact
         uses: actions/upload-artifact@v2
@@ -37,7 +37,7 @@ jobs:
     name: Continuous Delivery
     runs-on: ubuntu-latest
 
-    needs: build  # Ensure the 'build' job is completed before starting this job
+    needs: build  
 
     steps:
       - name: Download Docker Image Artifact
